@@ -75,6 +75,9 @@ input:focus-visible,select:focus-visible,button:focus-visible,summary:focus-visi
 .hint{font-size:12px;color:var(--muted);margin:0}
 details{border-top:1px solid var(--line);padding-top:12px}
 summary{cursor:pointer;font-size:14px;font-weight:500}
+.kmBadge{display:flex;flex-wrap:wrap;gap:6px;align-items:baseline;font-size:13px;background:color-mix(in srgb,var(--primary) 12%,var(--card));border:1px solid color-mix(in srgb,var(--primary) 35%,var(--border));border-radius:8px;padding:8px 10px}
+.kmBadge b{font-family:var(--f-mono);font-size:16px;color:var(--insi)}
+.kmBadge span{color:var(--muted)}
 .find{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
 .findBtn{font:inherit;font-size:13px;font-weight:600;border:0;border-radius:8px;padding:0 12px;background:var(--secondary);color:var(--secondary-foreground);cursor:pointer;white-space:nowrap}
 .findBtn[disabled]{opacity:.6;cursor:progress}
@@ -159,6 +162,7 @@ a{color:var(--steel)}
           <button type="button" class="findBtn" id="findBtn">Построить маршрут</button>
         </div>
         <datalist id="places"></datalist>
+        <div class="kmBadge" id="placeKm" hidden></div>
         <p class="hint" id="placeHint">118 пунктов УрФО — маршруты уже посчитаны. Любой другой адрес: введите и нажмите «Построить маршрут».</p>
       </div>
       <div class="row2">
@@ -408,7 +412,7 @@ function save() {
   } catch (e) {}
 }
 
-$('places').append(...PLACES.map(p => { const o = document.createElement('option'); o.value = p[0]; return o; }));
+$('places').append(...PLACES.map(p => { const o = document.createElement('option'); o.value = p[0]; const r = ROADS.insi && ROADS.insi[p[0]]; if (r) o.label = r[0] + ' км от ИНСИ Блок · ' + String(r[1]).replace('.', ',') + ' ч'; return o; }));
 
 function buildPrices() {
   const box = $('prices'); box.replaceChildren();
@@ -526,6 +530,14 @@ function compute() {
 function render() {
   const r = compute(); last = r; save();
   const insi = r.rows.find(x => x.own);
+  const kb = $('placeKm');
+  if (Number.isFinite(insi.km)) {
+    kb.hidden = false; kb.replaceChildren();
+    const t1 = document.createElement('span'); t1.textContent = 'От ИНСИ Блок:';
+    const b = document.createElement('b'); b.textContent = nf.format(insi.km) + ' км';
+    const t2 = document.createElement('span'); t2.textContent = (insi.hours != null && !insi.manual ? String(insi.hours).replace('.', ',') + ' ч · ' : '') + insi.kmSrc;
+    kb.append(t1, b, t2);
+  } else kb.hidden = true;
   const comp = r.rows.filter(x => !x.own && x.on && Number.isFinite(x.perM3));
   const best = comp.slice().sort((a,b) => a.perM3 - b.perM3)[0];
   const ok = Number.isFinite(insi.perM3) && best;
