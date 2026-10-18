@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+</head>
+<body>
+<title>Газобетон на объекте</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Onest:wght@400;500;600&family=Merriweather:wght@400;700&family=Fira+Code:wght@400;600&display=swap">
+<style>
+/* Layout: инструмент — слева паспорт объекта (ввод), справа вердикт, рейтинг цен на объекте, схема плеч и детализация.
+   Тема: токены из присланного файла (shadcn), Outfit / Merriweather / Fira Code. */
+:root{
+  --background:oklch(0.9383 0.0042 236.4993); --foreground:oklch(0.3211 0 0);
+  --card:oklch(1 0 0); --primary:oklch(0.6420 0.1691 38.5815); --primary-foreground:oklch(1 0 0);
+  --secondary:oklch(0.4138 0.0846 259.8759); --secondary-foreground:oklch(1 0 0);
+  --muted:oklch(0.9846 0.0017 247.8389); --muted-foreground:oklch(0.5510 0.0234 264.3637);
+  --accent:oklch(0.9119 0.0222 243.8174); --accent-foreground:oklch(0.3791 0.1378 265.5222);
+  --destructive:oklch(0.6368 0.2078 25.3313); --border:oklch(0.8452 0 0); --input:oklch(0.9700 0.0029 264.5420);
+  --ring:oklch(0.6397 0.1720 36.4421); --chart-1:oklch(0.6693 0.0706 248.9230);
+  --ok:oklch(0.55 0.13 150);
+  --shadow-sm:0px 1px 3px 0px hsl(0 0% 10.1961% / 0.10), 0px 1px 2px -1px hsl(0 0% 10.1961% / 0.10);
+  --font-sans:"Outfit","Onest",system-ui,sans-serif; --font-serif:"Merriweather",Georgia,serif; --font-mono:"Fira Code",ui-monospace,Menlo,monospace;
+  --radius:0.5rem;
+  --f-display:var(--font-serif); --f-body:var(--font-sans); --f-mono:var(--font-mono); --r:var(--radius);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --background:oklch(0.2178 0 0); --foreground:oklch(0.9219 0 0);
+  --card:oklch(0.2435 0 0); --primary:oklch(0.6420 0.1691 38.5815); --primary-foreground:oklch(1 0 0);
+  --secondary:oklch(0.3743 0.0726 258.5213); --secondary-foreground:oklch(0.9219 0 0);
+  --muted:oklch(0.2850 0 0); --muted-foreground:oklch(0.5999 0 0);
+  --accent:oklch(0.3380 0.0589 267.5867); --accent-foreground:oklch(0.8823 0.0571 254.1284);
+  --destructive:oklch(0.6368 0.2078 25.3313); --border:oklch(0.3290 0 0); --input:oklch(0.3092 0 0);
+  --ring:oklch(0.6397 0.1720 36.4421); --chart-1:oklch(0.7124 0.0606 248.6896);
+  --ok:oklch(0.72 0.14 150); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --background:oklch(0.2178 0 0); --foreground:oklch(0.9219 0 0);
+  --card:oklch(0.2435 0 0); --primary:oklch(0.6420 0.1691 38.5815); --primary-foreground:oklch(1 0 0);
+  --secondary:oklch(0.3743 0.0726 258.5213); --secondary-foreground:oklch(0.9219 0 0);
+  --muted:oklch(0.2850 0 0); --muted-foreground:oklch(0.5999 0 0);
+  --accent:oklch(0.3380 0.0589 267.5867); --accent-foreground:oklch(0.8823 0.0571 254.1284);
+  --destructive:oklch(0.6368 0.2078 25.3313); --border:oklch(0.3290 0 0); --input:oklch(0.3092 0 0);
+  --ring:oklch(0.6397 0.1720 36.4421); --chart-1:oklch(0.7124 0.0606 248.6896);
+  --ok:oklch(0.72 0.14 150); color-scheme:dark}
+body{
+  --bg:var(--background); --panel:var(--card); --ink:var(--foreground); --muted:var(--muted-foreground);
+  --line:var(--border); --steel:var(--chart-1); --steel-soft:var(--accent); --insi:var(--primary);
+  --insi-soft:color-mix(in srgb,var(--primary) 14%,var(--card)); --bad:var(--destructive); --grid:var(--input);
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px 48px}
+.wrap{max-width:1240px;margin-inline:auto;display:flex;flex-direction:column;gap:20px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(22px,3vw,30px);letter-spacing:-.01em;margin:0;text-wrap:balance}
+.sub{color:var(--muted);margin:4px 0 0;max-width:62ch}
+.hdr-r{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.theme{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:2px;background:var(--panel);box-shadow:var(--shadow-sm)}
+.theme button{font:inherit;font-size:12px;border:0;background:transparent;color:var(--muted);padding:5px 12px;border-radius:999px;cursor:pointer}
+.theme button[aria-pressed="true"]{background:var(--secondary);color:var(--secondary-foreground);font-weight:600}
+.stamp{font-family:var(--f-mono);font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:4px 10px;white-space:nowrap}
+.main{display:grid;grid-template-columns:minmax(0,330px) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:860px){.main{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-sm);padding:18px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.panel h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;margin:0}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:13px;color:var(--muted)}
+input,select{font:inherit;color:var(--ink);background:var(--input);border:1px solid var(--line);border-radius:8px;padding:9px 11px;width:100%;min-width:0}
+input:focus-visible,select:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid color-mix(in srgb,var(--ring) 50%,transparent);outline-offset:2px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.seg{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{font:inherit;font-size:14px;border:0;background:var(--bg);color:var(--muted);padding:9px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--secondary);color:var(--secondary-foreground);font-weight:600}
+.hint{font-size:12px;color:var(--muted);margin:0}
+details{border-top:1px solid var(--line);padding-top:12px}
+summary{cursor:pointer;font-size:14px;font-weight:500}
+.prices{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.prices .p{display:grid;grid-template-columns:minmax(0,1fr) 96px;gap:8px;align-items:center;font-size:13px}
+.prices input{font-family:var(--f-mono);padding:6px 8px;text-align:right}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.verdict{border-radius:var(--r);padding:18px 20px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center;border:1px solid var(--line);background:var(--panel)}
+.verdict.good{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 9%,var(--panel))}
+.verdict.bad{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 8%,var(--panel))}
+.verdict .lead{font-size:17px;font-weight:600;margin:0;text-wrap:balance}
+.verdict .lead2{color:var(--muted);margin:4px 0 0;font-size:14px}
+.big{font-family:var(--f-display);font-weight:500;font-size:clamp(26px,4vw,38px);font-variant-numeric:tabular-nums;white-space:nowrap}
+.verdict.good .big{color:var(--ok)}.verdict.bad .big{color:var(--bad)}
+.big small{font-family:var(--f-body);font-size:13px;color:var(--muted);font-weight:400;display:block;text-align:right}
+@media (max-width:520px){.verdict{grid-template-columns:1fr}.big small{text-align:left}}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:12px}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-sm);padding:14px 16px;display:flex;flex-direction:column;gap:2px}
+.tile .k{font-size:12px;color:var(--muted)}
+.tile .v{font-family:var(--f-mono);font-size:20px;font-weight:600}
+.rank{display:flex;flex-direction:column;gap:2px}
+.rk{display:grid;grid-template-columns:28px minmax(0,190px) minmax(0,1fr) 92px;gap:10px;align-items:center;padding:8px 6px;border-radius:8px}
+.rk.own{background:var(--insi-soft)}
+.rk .pos{font-family:var(--f-mono);color:var(--muted);font-size:13px;text-align:right}
+.rk .nm{font-weight:500;min-width:0}
+.rk .nm span{display:block;font-size:12px;color:var(--muted);font-weight:400;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar{height:22px;background:var(--grid);border-radius:6px;position:relative;overflow:hidden}
+.bar i{position:absolute;inset:0 auto 0 0;border-radius:6px;display:flex}
+.bar b{height:100%;display:block}
+.bar .bp{background:var(--steel)}.bar .bd{background:color-mix(in srgb,var(--steel) 45%,var(--grid))}
+.rk.own .bar .bp{background:var(--insi)}.rk.own .bar .bd{background:color-mix(in srgb,var(--insi) 45%,var(--grid))}
+.rk .val{font-family:var(--f-mono);font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+.rk .val span{display:block;font-size:11px;font-weight:400;color:var(--muted)}
+@media (max-width:560px){.rk{grid-template-columns:22px minmax(0,1fr) 84px}.rk .bar{grid-column:2/4}}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:6px}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+@media (max-width:1060px){.two{grid-template-columns:minmax(0,1fr)}}
+.map{width:100%;height:auto;display:block}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+th{text-align:left;color:var(--muted);font-weight:500;padding:8px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:8px;border-bottom:1px solid var(--line);vertical-align:middle}
+td.n,th.n{text-align:right;white-space:nowrap}
+tr.own td{background:var(--insi-soft)}
+td input.km{width:76px;padding:5px 6px;font-family:var(--f-mono);text-align:right}
+td.d.pos{color:var(--ok)} td.d.neg{color:var(--bad)}
+a{color:var(--steel)}
+.src{font-size:12px}
+.chk{display:flex;align-items:center;gap:6px;font-size:13px}
+.chk input{width:auto}
+.notes{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:6px;margin:0;padding-left:18px}
+.copy{font:inherit;font-size:13px;font-weight:600;border:0;background:var(--primary);color:var(--primary-foreground);border-radius:8px;padding:8px 12px;cursor:pointer}
+.copy:hover{filter:brightness(1.05)}
+@media (prefers-reduced-motion:no-preference){.bar i{transition:width .45s cubic-bezier(.2,.7,.2,1)}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Газобетон на объекте</h1>
+      <p class="sub">Укажите место стройки и объём. Калькулятор сравнит цену ИНСИ Блок и конкурентов с доставкой до объекта.</p>
+    </div>
+    <div class="hdr-r">
+      <div class="theme" role="group" aria-label="Тема">
+        <button type="button" id="thAuto" data-th="auto" aria-pressed="true">Авто</button>
+        <button type="button" id="thLight" data-th="light" aria-pressed="false">Светлая</button>
+        <button type="button" id="thDark" data-th="dark" aria-pressed="false">Тёмная</button>
+      </div>
+      <span class="stamp">Цены собраны 18.10.2026</span>
+    </div>
+  </header>
+
+  <div class="main">
+    <form class="panel" id="form" autocomplete="off">
+      <h2>Объект</h2>
+      <div class="field">
+        <label for="place">Населённый пункт</label>
+        <input id="place" list="places" placeholder="Начните вводить: Миасс, Троицк…">
+        <datalist id="places"></datalist>
+        <p class="hint" id="placeHint">Нет в списке — введите координаты ниже или своё расстояние в таблице.</p>
+      </div>
+      <div class="row2">
+        <div class="field"><label for="lat">Широта</label><input id="lat" inputmode="decimal" class="mono"></div>
+        <div class="field"><label for="lon">Долгота</label><input id="lon" inputmode="decimal" class="mono"></div>
+      </div>
+      <h2>Заказ</h2>
+      <div class="row2">
+        <div class="field"><label for="vol">Объём, м³</label><input id="vol" type="number" min="1" step="1" value="81" class="mono"></div>
+        <div class="field"><label for="tariff">Тариф фуры, ₽/км</label><input id="tariff" type="number" min="1" step="5" value="90" class="mono"></div>
+      </div>
+      <div class="field">
+        <label>Покупатель ИНСИ</label>
+        <div class="seg" role="group" aria-label="Покупатель">
+          <button type="button" id="cJur" aria-pressed="true">Юрлицо</button>
+          <button type="button" id="cFiz" aria-pressed="false">Физлицо от 81 м³</button>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field"><label for="truck">Фура, м³</label><input id="truck" type="number" min="1" step="1" value="27" class="mono"></div>
+        <div class="field"><label for="coef">Коэф. дороги</label><input id="coef" type="number" min="1" max="2" step="0.05" value="1.2" class="mono"></div>
+      </div>
+      <p class="hint" id="kmHint">Для пунктов из списка расстояние берётся по реальным дорогам (OpenStreetMap, расчёт 18.10.2026). Для своих координат — по прямой × коэффициент дороги. Своё значение можно ввести в таблице.</p>
+      <details>
+        <summary>Цены заводов, ₽/м³</summary>
+        <div class="prices" id="prices"></div>
+        <p class="hint">Изменения пересчитываются сразу. Подтверждённые звонком цены вводите сюда.</p>
+      </details>
+    </form>
+
+    <div style="display:flex;flex-direction:column;gap:20px;min-width:0">
+      <section class="verdict" id="verdict" aria-live="polite">
+        <div><p class="lead" id="vLead">—</p><p class="lead2" id="vLead2"></p></div>
+        <div class="big" id="vBig">—<small id="vBigLab"></small></div>
+      </section>
+
+      <div class="tiles">
+        <div class="tile"><span class="k">ИНСИ на объекте</span><span class="v" id="tInsi">—</span></div>
+        <div class="tile"><span class="k">Ближайший конкурент</span><span class="v" id="tBest">—</span></div>
+        <div class="tile"><span class="k">Фур в заказе</span><span class="v" id="tTrucks">—</span></div>
+        <div class="tile"><span class="k">Залог за поддоны ИНСИ</span><span class="v" id="tDep">—</span></div>
+      </div>
+
+      <section class="panel">
+        <h2>Цена на объекте, ₽/м³</h2>
+        <div class="rank" id="rank"></div>
+        <div class="legend"><span><i style="background:var(--steel)"></i>цена завода</span><span><i style="background:color-mix(in srgb,var(--steel) 45%,var(--grid))"></i>доставка</span><span><i style="background:var(--insi)"></i>ИНСИ Блок</span></div>
+      </section>
+
+      <div class="two">
+        <section class="panel">
+          <h2>Плечи доставки</h2>
+          <svg class="map" id="map" viewBox="0 0 520 420" role="img" aria-label="Схема заводов и объекта"></svg>
+          <p class="hint">Схема по координатам, не карта дорог.</p>
+        </section>
+        <section class="panel">
+          <h2>Что учесть</h2>
+          <ul class="notes">
+            <li>Цены конкурентов взяты с сайтов заводов; дат на прайсах нет. Пораблок — акция «от», дата не указана.</li>
+            <li>Склад Пораблока в Челябинске: цена взята с витрины дилера МастерМарио, это оценка.</li>
+            <li>У Теплита в Сысерти нет D500 в прайсе — сравнение с его D400.</li>
+            <li>Дилерские скидки конкурентов не учтены: у дилера Теплит в Челябинске стоит 4 300 ₽/м³ против 5 800 на заводе.</li>
+            <li>Залог за поддон возвратный и в цену на объекте не входит.</li>
+            <li>Маршруты OSRM строятся по карте OpenStreetMap и не учитывают ограничения для фур (мосты, весовые знаки, зимники). Для крупной сделки сверьте км с перевозчиком.</li>
+          </ul>
+          <button type="button" class="copy" id="copyBtn">Скопировать расчёт</button>
+          <p class="hint" id="copyMsg"></p>
+        </section>
+      </div>
+
+      <section class="panel">
+        <h2>Детализация</h2>
+        <div class="tbl"><table>
+          <thead><tr><th>Поставщик</th><th>Марка</th><th class="n">Завод, ₽/м³</th><th class="n">Км</th><th>Как посчитано</th><th class="n">Доставка, ₽</th><th class="n">На объекте, ₽/м³</th><th class="n">Партия, ₽</th><th class="n">К ИНСИ, ₽/м³</th><th>Источник</th><th>В расчёт</th></tr></thead>
+          <tbody id="tbody"></tbody>
+        </table></div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script>
+const TB = 'https://twinblock.ru/prays-list';
+const SUP = [
+  { id:'insi', name:'ИНСИ Блок', sub:'п. Зауральский', lat:54.78, lon:61.40, jur:5300, fiz:5050, grade:'D500', own:true, src:'', srcLabel:'прайс ИНСИ, авг–окт 2026' },
+  { id:'reft', name:'Теплит', sub:'Рефтинский', lat:57.09, lon:61.68, price:5800, grade:'D500', src:TB, srcLabel:'twinblock.ru, дата не указана' },
+  { id:'ber', name:'Теплит', sub:'Березовский', lat:56.91, lon:60.81, price:6200, grade:'D500', src:TB, srcLabel:'twinblock.ru, дата не указана' },
+  { id:'sys', name:'Теплит', sub:'Сысерть', lat:56.50, lon:60.82, price:6100, grade:'D400 (D500 нет)', src:TB, srcLabel:'twinblock.ru, дата не указана' },
+  { id:'porevit', name:'Поревит', sub:'Ялуторовск', lat:56.65, lon:66.31, price:5100, grade:'D500', src:'https://porevit.ru/katalog/gazobetonnye-izdeliya/gazobetonnyj-blok-porevit-bp-300-d-500/', srcLabel:'porevit.ru, дата не определена' },
+  { id:'porablok', name:'Пораблок', sub:'Курган', lat:55.44, lon:65.34, price:4800, grade:'D500, акция «от»', src:'https://porablok.ru/about.php', srcLabel:'porablok.ru, дата не указана' },
+  { id:'porablokChel', name:'Пораблок', sub:'склад Челябинск', lat:55.16, lon:61.40, price:4400, grade:'D500, цена дилера', src:'https://chelyabinsk.mastermario.ru/production/bloki/porablok/gazoblok-porablok-p-300-d500/', srcLabel:'МастерМарио, оценка' },
+];
+const PLACES = [
+  ['Челябинск',55.16,61.40],['Кременкуль',55.21,61.23],['Копейск',55.12,61.62],['Коркино',54.89,61.40],['Еманжелинск',54.75,61.32],
+  ['Еткуль',54.82,61.59],['Южноуральск',54.44,61.26],['Увельский',54.44,61.36],['Троицк',54.08,61.56],['Пласт',54.37,60.81],
+  ['Миасс',55.05,60.11],['Чебаркуль',54.98,60.37],['Златоуст',55.17,59.65],['Сатка',55.05,59.03],['Аша',54.99,57.27],
+  ['Катав-Ивановск',54.75,58.20],['Кыштым',55.70,60.56],['Касли',55.89,60.75],['Озёрск',55.76,60.71],['Снежинск',56.08,60.73],
+  ['Верхний Уфалей',56.06,60.23],['Аргаяш',55.49,60.88],['Магнитогорск',53.41,58.98],['Верхнеуральск',53.88,59.22],['Карталы',53.05,60.65],
+  ['Варна',53.37,60.98],['Екатеринбург',56.84,60.61],['Арамиль',56.69,60.83],['Сысерть',56.50,60.81],['Полевской',56.49,60.24],
+  ['Каменск-Уральский',56.41,61.92],['Асбест',57.00,61.46],['Курган',55.44,65.34],['Шадринск',56.08,63.63],['Тюмень',57.15,65.54],
+  ['Уфа',54.74,55.97],['Учалы',54.32,59.38],['Белорецк',53.97,58.41],['Сибай',52.72,58.66],['Костанай (Казахстан)',53.21,63.62],
+];
+const REF = [['Челябинск',55.16,61.40],['Екатеринбург',56.84,60.61],['Курган',55.44,65.34],['Тюмень',57.15,65.54],['Магнитогорск',53.41,58.98]];
+
+// Дорожные расстояния (км) и время в пути (ч) по OSRM / OpenStreetMap, рассчитаны 18.10.2026
+const ROADS = {"insi": {"Челябинск": [55, 0.9], "Кременкуль": [81, 1.2], "Копейск": [56, 0.9], "Коркино": [16, 0.3], "Еманжелинск": [10, 0.3], "Еткуль": [15, 0.3], "Южноуральск": [51, 0.9], "Увельский": [55, 1.0], "Троицк": [97, 1.5], "Пласт": [84, 1.3], "Миасс": [123, 2.0], "Чебаркуль": [102, 1.5], "Златоуст": [169, 2.4], "Сатка": [205, 2.9], "Аша": [353, 4.9], "Катав-Ивановск": [278, 3.9], "Кыштым": [160, 2.4], "Касли": [192, 2.9], "Озёрск": [168, 2.6], "Снежинск": [201, 2.9], "Верхний Уфалей": [215, 3.5], "Аргаяш": [120, 1.8], "Магнитогорск": [270, 3.9], "Верхнеуральск": [233, 3.4], "Карталы": [278, 4.1], "Варна": [228, 3.4], "Екатеринбург": [277, 4.0], "Арамиль": [259, 3.7], "Сысерть": [237, 3.4], "Полевской": [273, 4.3], "Каменск-Уральский": [278, 4.1], "Асбест": [333, 4.9], "Курган": [321, 4.6], "Шадринск": [263, 3.8], "Тюмень": [468, 6.8], "Уфа": [433, 6.0], "Учалы": [210, 3.1], "Белорецк": [302, 4.6], "Сибай": [343, 4.8], "Костанай (Казахстан)": [281, 4.1]}, "reft": {"Челябинск": [281, 4.3], "Кременкуль": [290, 4.3], "Копейск": [302, 4.5], "Коркино": [338, 5.0], "Еманжелинск": [350, 5.2], "Еткуль": [324, 5.1], "Южноуральск": [387, 5.6], "Увельский": [390, 5.7], "Троицк": [432, 6.3], "Пласт": [404, 5.9], "Миасс": [309, 4.9], "Чебаркуль": [331, 5.1], "Златоуст": [340, 5.4], "Сатка": [387, 6.0], "Аша": [535, 8.0], "Катав-Ивановск": [460, 7.0], "Кыштым": [225, 3.5], "Касли": [197, 3.1], "Озёрск": [215, 3.4], "Снежинск": [180, 2.8], "Верхний Уфалей": [220, 3.7], "Аргаяш": [267, 4.2], "Магнитогорск": [587, 8.5], "Верхнеуральск": [491, 7.6], "Карталы": [599, 8.7], "Варна": [550, 8.0], "Екатеринбург": [103, 1.7], "Арамиль": [99, 1.7], "Сысерть": [121, 2.0], "Полевской": [144, 2.4], "Каменск-Уральский": [115, 1.9], "Асбест": [21, 0.4], "Курган": [361, 5.8], "Шадринск": [218, 3.7], "Тюмень": [276, 4.2], "Уфа": [636, 8.7], "Учалы": [413, 6.6], "Белорецк": [505, 8.1], "Сибай": [660, 9.4], "Костанай (Казахстан)": [617, 8.9]}, "ber": {"Челябинск": [217, 3.2], "Кременкуль": [226, 3.2], "Копейск": [239, 3.4], "Коркино": [274, 3.9], "Еманжелинск": [287, 4.1], "Еткуль": [260, 4.1], "Южноуральск": [323, 4.5], "Увельский": [327, 4.7], "Троицк": [369, 5.2], "Пласт": [340, 4.9], "Миасс": [245, 3.8], "Чебаркуль": [267, 4.0], "Златоуст": [277, 4.3], "Сатка": [324, 4.9], "Аша": [448, 6.8], "Катав-Ивановск": [396, 5.9], "Кыштым": [161, 2.4], "Касли": [133, 2.0], "Озёрск": [151, 2.3], "Снежинск": [116, 1.7], "Верхний Уфалей": [148, 2.5], "Аргаяш": [203, 3.1], "Магнитогорск": [523, 7.4], "Верхнеуральск": [427, 6.5], "Карталы": [536, 7.6], "Варна": [486, 6.9], "Екатеринбург": [16, 0.4], "Арамиль": [32, 0.6], "Сысерть": [57, 0.9], "Полевской": [72, 1.2], "Каменск-Уральский": [104, 1.7], "Асбест": [86, 1.3], "Курган": [373, 5.4], "Шадринск": [230, 3.4], "Тюмень": [330, 4.4], "Уфа": [556, 7.4], "Учалы": [350, 5.5], "Белорецк": [442, 7.0], "Сибай": [596, 8.4], "Костанай (Казахстан)": [553, 7.8]}, "sys": {"Челябинск": [164, 2.4], "Кременкуль": [173, 2.5], "Копейск": [185, 2.6], "Коркино": [221, 3.1], "Еманжелинск": [234, 3.3], "Еткуль": [207, 3.3], "Южноуральск": [270, 3.8], "Увельский": [273, 3.9], "Троицк": [315, 4.5], "Пласт": [287, 4.1], "Миасс": [192, 3.0], "Чебаркуль": [214, 3.3], "Златоуст": [223, 3.5], "Сатка": [270, 4.2], "Аша": [418, 6.2], "Катав-Ивановск": [343, 5.2], "Кыштым": [108, 1.6], "Касли": [80, 1.2], "Озёрск": [98, 1.5], "Снежинск": [63, 1.0], "Верхний Уфалей": [124, 1.9], "Аргаяш": [150, 2.3], "Магнитогорск": [470, 6.6], "Верхнеуральск": [374, 5.7], "Карталы": [482, 6.8], "Варна": [433, 6.2], "Екатеринбург": [46, 0.9], "Арамиль": [24, 0.5], "Сысерть": [1, 0.0], "Полевской": [76, 1.3], "Каменск-Уральский": [85, 1.6], "Асбест": [99, 1.7], "Курган": [354, 5.3], "Шадринск": [212, 3.2], "Тюмень": [344, 4.8], "Уфа": [498, 7.3], "Учалы": [296, 4.7], "Белорецк": [388, 6.2], "Сибай": [543, 7.6], "Костанай (Казахстан)": [500, 7.0]}, "porevit": {"Челябинск": [408, 6.1], "Кременкуль": [419, 6.4], "Копейск": [398, 5.9], "Коркино": [445, 6.5], "Еманжелинск": [457, 6.7], "Еткуль": [447, 6.6], "Южноуральск": [493, 7.1], "Увельский": [497, 7.3], "Троицк": [539, 7.8], "Пласт": [527, 7.6], "Миасс": [523, 7.8], "Чебаркуль": [501, 7.3], "Златоуст": [568, 8.2], "Сатка": [605, 8.7], "Аша": [752, 10.7], "Катав-Ивановск": [678, 9.7], "Кыштым": [446, 6.7], "Касли": [418, 6.3], "Озёрск": [436, 6.6], "Снежинск": [412, 6.2], "Верхний Уфалей": [462, 7.0], "Аргаяш": [449, 6.6], "Магнитогорск": [712, 10.2], "Верхнеуральск": [663, 9.6], "Карталы": [720, 10.4], "Варна": [671, 9.7], "Екатеринбург": [405, 5.7], "Арамиль": [401, 5.6], "Сысерть": [423, 6.0], "Полевской": [446, 6.3], "Каменск-Уральский": [313, 4.6], "Асбест": [365, 5.1], "Курган": [190, 2.7], "Шадринск": [197, 2.9], "Тюмень": [80, 1.2], "Уфа": [832, 11.9], "Учалы": [610, 8.9], "Белорецк": [701, 10.4], "Сибай": [786, 11.1], "Костанай (Казахстан)": [501, 8.1]}, "porablok": {"Челябинск": [271, 4.0], "Кременкуль": [283, 4.2], "Копейск": [261, 3.7], "Коркино": [309, 4.4], "Еманжелинск": [321, 4.5], "Еткуль": [310, 4.5], "Южноуральск": [357, 5.0], "Увельский": [361, 5.1], "Троицк": [403, 5.7], "Пласт": [390, 5.5], "Миасс": [386, 5.7], "Чебаркуль": [365, 5.2], "Златоуст": [432, 6.1], "Сатка": [468, 6.6], "Аша": [616, 8.6], "Катав-Ивановск": [541, 7.6], "Кыштым": [353, 5.1], "Касли": [381, 5.4], "Озёрск": [362, 5.3], "Снежинск": [377, 5.4], "Верхний Уфалей": [407, 6.2], "Аргаяш": [313, 4.5], "Магнитогорск": [576, 8.0], "Верхнеуральск": [526, 7.5], "Карталы": [584, 8.3], "Варна": [534, 7.6], "Екатеринбург": [369, 5.4], "Арамиль": [365, 5.3], "Сысерть": [354, 5.3], "Полевской": [410, 6.1], "Каменск-Уральский": [265, 3.9], "Асбест": [356, 5.3], "Курган": [0, 0.0], "Шадринск": [149, 2.2], "Тюмень": [200, 2.9], "Уфа": [696, 9.7], "Учалы": [473, 6.8], "Белорецк": [565, 8.3], "Сибай": [649, 9.0], "Костанай (Казахстан)": [312, 5.4]}, "porablokChel": {"Челябинск": [0, 0.0], "Кременкуль": [17, 0.4], "Копейск": [17, 0.3], "Коркино": [42, 0.8], "Еманжелинск": [54, 0.9], "Еткуль": [43, 0.9], "Южноуральск": [90, 1.4], "Увельский": [94, 1.5], "Троицк": [136, 2.1], "Пласт": [124, 1.9], "Миасс": [103, 1.8], "Чебаркуль": [82, 1.3], "Златоуст": [149, 2.2], "Сатка": [186, 2.7], "Аша": [333, 4.7], "Катав-Ивановск": [258, 3.7], "Кыштым": [97, 1.6], "Касли": [134, 2.1], "Озёрск": [105, 1.9], "Снежинск": [130, 2.0], "Верхний Уфалей": [152, 2.7], "Аргаяш": [57, 1.0], "Магнитогорск": [307, 4.4], "Верхнеуральск": [244, 3.5], "Карталы": [317, 4.6], "Варна": [268, 3.9], "Екатеринбург": [206, 3.1], "Арамиль": [187, 2.8], "Сысерть": [165, 2.5], "Полевской": [201, 3.4], "Каменск-Уральский": [207, 3.2], "Асбест": [262, 4.0], "Курган": [271, 4.0], "Шадринск": [213, 3.2], "Тюмень": [419, 6.2], "Уфа": [413, 5.8], "Учалы": [190, 2.9], "Белорецк": [282, 4.4], "Сибай": [380, 5.4], "Костанай (Казахстан)": [320, 4.6]}};
+
+const nf = new Intl.NumberFormat('ru-RU',{maximumFractionDigits:0});
+const sf = new Intl.NumberFormat('ru-RU',{maximumFractionDigits:0,signDisplay:'exceptZero'});
+const $ = (id) => document.getElementById(id);
+const num = (v) => { const x = parseFloat(String(v).replace(',', '.').replace(/\s/g,'')); return Number.isFinite(x) ? x : NaN; };
+
+const state = { client:'jur', kmOverride:{}, off:{}, prices:{} };
+SUP.forEach(s => { state.prices[s.id] = s.own ? { jur:s.jur, fiz:s.fiz } : s.price; });
+
+function load() {
+  try {
+    const s = JSON.parse(localStorage.getItem('gb-obj') || 'null');
+    if (s) {
+      ['place','lat','lon','vol','tariff','truck','coef'].forEach(k => { if (s[k] != null) $(k).value = s[k]; });
+      if (s.client) state.client = s.client;
+      if (s.kmOverride) state.kmOverride = s.kmOverride;
+      if (s.off) state.off = s.off;
+      if (s.prices) Object.assign(state.prices, s.prices);
+      return;
+    }
+  } catch (e) {}
+  $('place').value = 'Миасс'; $('lat').value = '55.05'; $('lon').value = '60.11';
+}
+function save() {
+  try {
+    const o = { client:state.client, kmOverride:state.kmOverride, off:state.off, prices:state.prices };
+    ['place','lat','lon','vol','tariff','truck','coef'].forEach(k => o[k] = $(k).value);
+    localStorage.setItem('gb-obj', JSON.stringify(o));
+  } catch (e) {}
+}
+
+$('places').append(...PLACES.map(p => { const o = document.createElement('option'); o.value = p[0]; return o; }));
+
+function buildPrices() {
+  const box = $('prices'); box.replaceChildren();
+  const add = (label, key, sub) => {
+    const r = document.createElement('div'); r.className = 'p';
+    const l = document.createElement('label'); l.textContent = label; l.htmlFor = 'pr-' + key + (sub || '');
+    const i = document.createElement('input'); i.id = 'pr-' + key + (sub || ''); i.inputMode = 'numeric';
+    i.value = sub ? state.prices[key][sub] : state.prices[key];
+    i.addEventListener('input', () => { const v = num(i.value); if (!Number.isFinite(v)) return; if (sub) state.prices[key][sub] = v; else state.prices[key] = v; render(); });
+    r.append(l, i); box.append(r);
+  };
+  add('ИНСИ, юрлица', 'insi', 'jur'); add('ИНСИ, физлица', 'insi', 'fiz');
+  SUP.filter(s => !s.own).forEach(s => add(s.name + ' · ' + s.sub, s.id));
+}
+
+function setClient(c) { state.client = c; $('cJur').setAttribute('aria-pressed', String(c === 'jur')); $('cFiz').setAttribute('aria-pressed', String(c === 'fiz')); render(); }
+$('cJur').addEventListener('click', () => setClient('jur'));
+$('cFiz').addEventListener('click', () => setClient('fiz'));
+
+$('place').addEventListener('input', () => {
+  const v = $('place').value.trim().toLowerCase();
+  const p = PLACES.find(x => x[0].toLowerCase() === v);
+  if (p) { $('lat').value = p[1]; $('lon').value = p[2]; state.kmOverride = {}; $('placeHint').textContent = 'Координаты подставлены из справочника.'; }
+  else $('placeHint').textContent = 'Нет в списке — введите координаты или своё расстояние в таблице.';
+  render();
+});
+['lat','lon','vol','tariff','truck','coef'].forEach(k => $(k).addEventListener('input', render));
+$('form').addEventListener('submit', (e) => e.preventDefault());
+
+function hav(a, b, c, d) {
+  const R = 6371, toR = Math.PI / 180;
+  const dLat = (c - a) * toR, dLon = (d - b) * toR;
+  const x = Math.sin(dLat/2)**2 + Math.cos(a*toR) * Math.cos(c*toR) * Math.sin(dLon/2)**2;
+  return 2 * R * Math.asin(Math.sqrt(x));
+}
+
+let last = null;
+function compute() {
+  const lat = num($('lat').value), lon = num($('lon').value);
+  const V = Math.max(1, num($('vol').value) || 81);
+  const tariff = num($('tariff').value) || 90;
+  const truck = Math.max(1, num($('truck').value) || 27);
+  const coef = num($('coef').value) || 1.2;
+  const trucks = Math.ceil(V / truck);
+  const hasPt = Number.isFinite(lat) && Number.isFinite(lon);
+  const pname = $('place').value.trim().toLowerCase();
+  const pm = PLACES.find(x => x[0].toLowerCase() === pname && Math.abs(x[1] - lat) < 0.005 && Math.abs(x[2] - lon) < 0.005);
+  const rows = SUP.map(s => {
+    const road = pm && ROADS[s.id] && ROADS[s.id][pm[0]] ? ROADS[s.id][pm[0]] : null;
+    const straight = hasPt ? Math.round(hav(s.lat, s.lon, lat, lon) * coef) : NaN;
+    const auto = road && road[0] != null ? road[0] : straight;
+    const hours = road ? road[1] : null;
+    const ov = num(state.kmOverride[s.id]);
+    const km = Number.isFinite(ov) ? ov : auto;
+    const kmSrc = Number.isFinite(ov) ? 'вручную' : road ? 'по дорогам' : 'по прямой × ' + String(coef).replace('.', ',');
+    const price = s.own ? state.prices.insi[state.client] : state.prices[s.id];
+    const deliv = Number.isFinite(km) ? trucks * km * tariff : NaN;
+    const perM3 = price + deliv / V;
+    return { ...s, km, auto, hours, kmSrc, manual:Number.isFinite(ov), price, deliv, perM3, total: price * V + deliv, on: s.own || !state.off[s.id] };
+  });
+  return { rows, V, trucks, tariff, hasPt, lat, lon };
+}
+
+function render() {
+  const r = compute(); last = r; save();
+  const insi = r.rows.find(x => x.own);
+  const comp = r.rows.filter(x => !x.own && x.on && Number.isFinite(x.perM3));
+  const best = comp.slice().sort((a,b) => a.perM3 - b.perM3)[0];
+  const ok = Number.isFinite(insi.perM3) && best;
+
+  const vd = $('verdict'); vd.classList.remove('good','bad');
+  if (!ok) {
+    $('vLead').textContent = 'Укажите место объекта'; $('vLead2').textContent = 'Выберите населённый пункт из списка или введите координаты.';
+    $('vBig').firstChild.nodeValue = '—'; $('vBigLab').textContent = '';
+  } else {
+    const gap = best.perM3 - insi.perM3;
+    vd.classList.add(gap >= 0 ? 'good' : 'bad');
+    const who = best.name + ' · ' + best.sub;
+    if (gap >= 0) {
+      $('vLead').textContent = 'ИНСИ дешевле ближайшего конкурента на ' + nf.format(gap) + ' ₽/м³';
+      $('vLead2').textContent = 'Ближайший — ' + who + ', ' + nf.format(best.perM3) + ' ₽/м³ на объекте. Это запас для повышения цены в этой сделке.';
+    } else {
+      $('vLead').textContent = 'ИНСИ дороже ближайшего конкурента на ' + nf.format(-gap) + ' ₽/м³';
+      $('vLead2').textContent = 'Ближайший — ' + who + ', ' + nf.format(best.perM3) + ' ₽/м³. Чтобы сравняться, нужна скидка ' + nf.format(-gap) + ' ₽/м³ или ' + nf.format(-gap * r.V) + ' ₽ на партию.';
+    }
+    $('vBig').firstChild.nodeValue = sf.format(gap) + ' ₽';
+    $('vBigLab').textContent = 'запас на м³ · партия ' + sf.format(gap * r.V) + ' ₽';
+  }
+  $('tInsi').textContent = Number.isFinite(insi.perM3) ? nf.format(insi.perM3) + ' ₽' : '—';
+  $('tBest').textContent = best ? nf.format(best.perM3) + ' ₽' : '—';
+  $('tTrucks').textContent = r.trucks + ' × ' + nf.format(num($('truck').value) || 27) + ' м³';
+  $('tDep').textContent = nf.format(Math.ceil(r.V / 1.5) * 250) + ' ₽';
+
+  // Ranking
+  const list = r.rows.filter(x => x.on && Number.isFinite(x.perM3)).sort((a,b) => a.perM3 - b.perM3);
+  const max = Math.max(...list.map(x => x.perM3), 1);
+  const rank = $('rank'); rank.replaceChildren();
+  list.forEach((x, i) => {
+    const el = document.createElement('div'); el.className = 'rk' + (x.own ? ' own' : '');
+    const pos = document.createElement('span'); pos.className = 'pos'; pos.textContent = i + 1;
+    const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = x.name;
+    const sb = document.createElement('span'); sb.textContent = x.sub + ' · ' + nf.format(x.km) + ' км ' + x.kmSrc + (x.hours != null && !x.manual ? ' · ' + String(x.hours).replace('.', ',') + ' ч' : ''); nm.append(sb);
+    const bar = document.createElement('div'); bar.className = 'bar';
+    const w = document.createElement('i'); w.style.width = (x.perM3 / max * 100) + '%';
+    const bp = document.createElement('b'); bp.className = 'bp'; bp.style.width = (x.price / x.perM3 * 100) + '%';
+    const bd = document.createElement('b'); bd.className = 'bd'; bd.style.width = ((x.perM3 - x.price) / x.perM3 * 100) + '%';
+    w.append(bp, bd); bar.append(w);
+    bar.title = 'Завод ' + nf.format(x.price) + ' + доставка ' + nf.format(x.perM3 - x.price) + ' ₽/м³';
+    const val = document.createElement('div'); val.className = 'val'; val.textContent = nf.format(x.perM3);
+    const vs = document.createElement('span'); vs.textContent = x.own ? 'ИНСИ' : sf.format(x.perM3 - insi.perM3) + ' к ИНСИ'; val.append(vs);
+    el.append(pos, nm, bar, val); rank.append(el);
+  });
+
+  // Table
+  const tb = $('tbody'); tb.replaceChildren();
+  r.rows.forEach(x => {
+    const tr = document.createElement('tr'); if (x.own) tr.className = 'own';
+    const td = (t, cls) => { const c = document.createElement('td'); if (cls) c.className = cls; c.textContent = t; tr.append(c); return c; };
+    td(x.name + ' · ' + x.sub + (x.own ? (state.client === 'jur' ? ' (юр.)' : ' (физ.)') : ''));
+    td(x.grade);
+    td(nf.format(x.price), 'n');
+    const kc = document.createElement('td'); kc.className = 'n';
+    const ki = document.createElement('input'); ki.className = 'km'; ki.id = 'km-' + x.id; ki.inputMode = 'numeric';
+    ki.placeholder = Number.isFinite(x.auto) ? String(x.auto) : 'км';
+    ki.value = x.manual ? state.kmOverride[x.id] : '';
+    ki.setAttribute('aria-label', 'Расстояние, км: ' + x.name + ' ' + x.sub);
+    ki.addEventListener('change', () => { if (ki.value.trim() === '') delete state.kmOverride[x.id]; else state.kmOverride[x.id] = ki.value; render(); });
+    kc.append(ki); tr.append(kc);
+    td(Number.isFinite(x.km) ? x.kmSrc : '—');
+    td(Number.isFinite(x.deliv) ? nf.format(x.deliv) : '—', 'n');
+    td(Number.isFinite(x.perM3) ? nf.format(x.perM3) : '—', 'n');
+    td(Number.isFinite(x.total) ? nf.format(x.total) : '—', 'n');
+    const d = x.perM3 - insi.perM3;
+    td(x.own || !Number.isFinite(d) ? '—' : sf.format(d), 'n d' + (x.own ? '' : d >= 0 ? ' pos' : ' neg'));
+    const sc = document.createElement('td'); sc.className = 'src';
+    if (x.src) { const a = document.createElement('a'); a.href = x.src; a.target = '_blank'; a.rel = 'noopener'; a.textContent = x.srcLabel; sc.append(a); } else sc.textContent = x.srcLabel;
+    tr.append(sc);
+    const cc = document.createElement('td');
+    if (!x.own) { const lab = document.createElement('label'); lab.className = 'chk'; const cb = document.createElement('input'); cb.type = 'checkbox'; cb.id = 'on-' + x.id; cb.checked = x.on; cb.addEventListener('change', () => { if (cb.checked) delete state.off[x.id]; else state.off[x.id] = true; render(); }); lab.append(cb, document.createTextNode('да')); cc.append(lab); } else cc.textContent = '—';
+    tr.append(cc);
+    tb.append(tr);
+  });
+
+  drawMap(r);
+}
+
+function drawMap(r) {
+  const svg = $('map'); svg.replaceChildren();
+  const NS = 'http://www.w3.org/2000/svg';
+  const pts = SUP.map(s => [s.lat, s.lon]).concat(REF.map(x => [x[1], x[2]]));
+  if (r.hasPt) pts.push([r.lat, r.lon]);
+  const lat0 = pts.reduce((a,p) => a + p[0], 0) / pts.length, k = Math.cos(lat0 * Math.PI / 180);
+  const xs = pts.map(p => p[1] * k), ys = pts.map(p => p[0]);
+  const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+  const W = 520, H = 420, pad = 46;
+  const s = Math.min((W - 2*pad) / (maxX - minX || 1), (H - 2*pad) / (maxY - minY || 1));
+  const ox = (W - (maxX - minX) * s) / 2, oy = (H - (maxY - minY) * s) / 2;
+  const P = (la, lo) => [ox + (lo * k - minX) * s, H - (oy + (la - minY) * s)];
+  const el = (n, a, txt) => { const e = document.createElementNS(NS, n); for (const [kk, v] of Object.entries(a)) e.setAttribute(kk, v); if (txt != null) e.textContent = txt; svg.append(e); return e; };
+  const css = (v) => getComputedStyle(document.body).getPropertyValue(v).trim();
+  REF.forEach(c => { const [x, y] = P(c[1], c[2]); el('circle', { cx:x, cy:y, r:2.5, fill:css('--muted') }); el('text', { x:x + 6, y:y - 5, 'font-size':11, fill:css('--muted'), 'font-family':'Outfit, Onest, system-ui, sans-serif' }, c[0]); });
+  if (r.hasPt) {
+    const [ex, ey] = P(r.lat, r.lon);
+    r.rows.filter(x => x.on).forEach(x => {
+      const [sx, sy] = P(x.lat, x.lon);
+      el('line', { x1:sx, y1:sy, x2:ex, y2:ey, stroke: x.own ? css('--insi') : css('--steel'), 'stroke-width': x.own ? 2.5 : 1.2, 'stroke-dasharray': x.own ? '' : '4 4', opacity: x.own ? 1 : .7 });
+      const mx = (sx + ex) / 2, my = (sy + ey) / 2;
+      if (Number.isFinite(x.km)) el('text', { x:mx, y:my - 4, 'font-size':10, fill: x.own ? css('--insi') : css('--steel'), 'font-family':'Fira Code, monospace', 'text-anchor':'middle', 'paint-order':'stroke', stroke:css('--panel'), 'stroke-width':3 }, nf.format(x.km) + ' км');
+    });
+  }
+  SUP.forEach(x => {
+    const [sx, sy] = P(x.lat, x.lon);
+    el('rect', { x:sx - 5, y:sy - 5, width:10, height:10, rx:2, fill: x.own ? css('--insi') : css('--steel') });
+    el('text', { x:sx + 9, y:sy + 14, 'font-size':11, fill:css('--ink'), 'font-family':'Outfit, Onest, system-ui, sans-serif', 'paint-order':'stroke', stroke:css('--panel'), 'stroke-width':3, 'font-weight': x.own ? 600 : 400 }, x.own ? 'ИНСИ Блок' : x.name + ' ' + x.sub);
+  });
+  if (r.hasPt) {
+    const [ex, ey] = P(r.lat, r.lon);
+    el('circle', { cx:ex, cy:ey, r:9, fill:'none', stroke:css('--ink'), 'stroke-width':2 });
+    el('circle', { cx:ex, cy:ey, r:3.5, fill:css('--ink') });
+    el('text', { x:ex, y:ey - 14, 'font-size':12, 'font-weight':600, fill:css('--ink'), 'text-anchor':'middle', 'font-family':'Outfit, Onest, system-ui, sans-serif', 'paint-order':'stroke', stroke:css('--panel'), 'stroke-width':3 }, $('place').value || 'Объект');
+  }
+}
+
+$('copyBtn').addEventListener('click', () => {
+  if (!last) return;
+  const lines = ['Объект: ' + ($('place').value || 'координаты ' + $('lat').value + ', ' + $('lon').value), 'Объём: ' + last.V + ' м³, фур: ' + last.trucks + ', тариф ' + last.tariff + ' ₽/км', ''];
+  last.rows.filter(x => x.on && Number.isFinite(x.perM3)).sort((a,b) => a.perM3 - b.perM3).forEach(x => lines.push(x.name + ' ' + x.sub + ': ' + nf.format(x.perM3) + ' ₽/м³, ' + nf.format(x.km) + ' км ' + x.kmSrc + ', партия ' + nf.format(x.total) + ' ₽'));
+  const text = lines.join('\n');
+  const done = () => { $('copyMsg').textContent = 'Расчёт скопирован.'; };
+  const fallback = () => { $('copyMsg').textContent = text; };
+  try { navigator.clipboard.writeText(text).then(done, fallback); } catch (e) { fallback(); }
+});
+
+const mq = window.matchMedia('(prefers-color-scheme: dark)');
+mq.addEventListener && mq.addEventListener('change', () => last && drawMap(last));
+new MutationObserver(() => last && drawMap(last)).observe(document.documentElement, { attributes:true, attributeFilter:['data-theme'] });
+
+function applyTheme(t) {
+  if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  else document.documentElement.removeAttribute('data-theme');
+  document.querySelectorAll('.theme button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.th === (t || 'auto'))));
+  try { localStorage.setItem('gb-theme', t || 'auto'); } catch (e) {}
+}
+document.querySelectorAll('.theme button').forEach(b => b.addEventListener('click', () => applyTheme(b.dataset.th)));
+try { applyTheme(localStorage.getItem('gb-theme') || 'auto'); } catch (e) { applyTheme('auto'); }
+
+load();
+setClient(state.client);
+buildPrices();
+render();
+</script>
+
+</body>
+</html>
