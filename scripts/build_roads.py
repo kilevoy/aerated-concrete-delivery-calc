@@ -2,7 +2,7 @@
 
 Координаты берутся из index.html (массивы SUP и PLACES).
 Результат: data/roads.json — {id_завода: {пункт: [км, часы]}}.
-После пересчёта содержимое файла нужно вставить в константу ROADS в index.html.
+Скрипт также обновляет константу ROADS в index.html.
 """
 import json, re, urllib.request, pathlib
 
@@ -10,7 +10,7 @@ root = pathlib.Path(__file__).resolve().parent.parent
 s = (root / "index.html").read_text(encoding="utf-8")
 sup = re.findall(r"\{ id:'(\w+)', name:'[^']*', sub:'[^']*', lat:([\d.]+), lon:([\d.]+)", s)
 block = s.split("const PLACES = [")[1].split("];")[0]
-places = re.findall(r"\['([^']+)',([\d.]+),([\d.]+)\]", block)
+places = re.findall(r"\['([^']+)',\s*([\d.]+),\s*([\d.]+)\]", block)
 
 coords = ";".join(f"{lo},{la}" for _, la, lo in sup) + ";" + ";".join(f"{lo},{la}" for _, la, lo in places)
 n = len(sup)
@@ -27,4 +27,6 @@ for i, (sid, _, _) in enumerate(sup):
         km, sec = d["distances"][i][j], d["durations"][i][j]
         out[sid][name] = [round(km / 1000) if km is not None else None, round(sec / 3600, 1) if sec is not None else None]
 (root / "data" / "roads.json").write_text(json.dumps(out, ensure_ascii=False), encoding="utf-8")
+s = re.sub(r"const ROADS = \{.*?\};\n", lambda m: "const ROADS = " + json.dumps(out, ensure_ascii=False) + ";\n", s, count=1, flags=re.S)
+(root / "index.html").write_text(s, encoding="utf-8")
 print(f"{n} площадок × {len(places)} пунктов → data/roads.json")
